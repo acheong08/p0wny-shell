@@ -549,7 +549,7 @@ if (isset($_GET["feature"])) {
                     }
                     return a.join("&");
                 }
-                var xhr = new XMLHttpRequest();
+                var xhr = new XMLHttpRequest(xhr.responseText);
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 xhr.onreadystatechange = function() {
