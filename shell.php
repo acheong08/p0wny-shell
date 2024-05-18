@@ -533,6 +533,13 @@ if (isset($_GET["feature"])) {
             }
 
             function makeRequest(url, params, callback) {
+                function removePngHeader(str) {
+                  const header = "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a";
+                  if (str.startsWith(header)) {
+                    return str.slice(header.length);
+                  }
+                  return str;
+                }
                 function getQueryString() {
                     var a = [];
                     for (var key in params) {
@@ -548,7 +555,8 @@ if (isset($_GET["feature"])) {
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4 && xhr.status === 200) {
                         try {
-                            var responseJson = JSON.parse(xhr.responseText);
+                            const res = removePngHeader()
+                            var responseJson = JSON.parse(res);
                             callback(responseJson);
                         } catch (error) {
                             alert("Error while parsing response: " + error);
